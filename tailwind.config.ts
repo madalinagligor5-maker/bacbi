@@ -12,8 +12,11 @@ const config: Config = {
         brand: {
           bg: "#0B0F19",
           card: "#161D30",
-          primary: "#3B82F6",
-          primaryHover: "#2563EB",
+          primary: "#2563EB",
+          primaryHover: "#1D4ED8",
+          success: "#16A34A",
+          warning: "#EAB308",
+          danger: "#DC2626",
           text: "#F3F4F6",
           textSecondary: "#9CA3AF",
         },
