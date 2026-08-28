@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-6 text-center text-foreground">
@@ -9,22 +11,22 @@ export default function Home() {
       </div>
 
       <p className="max-w-md text-lg text-slate-600">
-        Pregătire inteligentă pentru examenul de bacalaureat. Aplicația rulează corect. ✓
+        Pregătire inteligentă pentru examenul de bacalaureat.
       </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <span className="rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
-          Primar
-        </span>
-        <span className="rounded-full bg-success/10 px-4 py-1.5 text-sm font-semibold text-success">
-          Succes
-        </span>
-        <span className="rounded-full bg-warning/10 px-4 py-1.5 text-sm font-semibold text-warning">
-          Atenție
-        </span>
-        <span className="rounded-full bg-danger/10 px-4 py-1.5 text-sm font-semibold text-danger">
-          Slab
-        </span>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Link
+          href="/auth/login"
+          className="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        >
+          Autentificare
+        </Link>
+        <Link
+          href="/auth/register"
+          className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+        >
+          Creează cont
+        </Link>
       </div>
     </main>
   );
