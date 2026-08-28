@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase, isMocked } from "@/lib/supabase";
-import { LogOut, BookOpen, User, Copy, Check, Users } from "lucide-react";
+import { LogOut, BookOpen, User, Copy, Check, Users, Sparkles, BarChart2, ShieldAlert } from "lucide-react";
+import Link from "next/link";
 
 export default function Dashboard() {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
+  const [attempts, setAttempts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
@@ -31,6 +33,18 @@ export default function Dashboard() {
       }
 
       setProfile(userProfile);
+
+      // Load attempts to see if diagnostic was completed
+      // The mock or supabase client query
+      const { data: attemptsData } = await supabase
+        .from("incercari")
+        .select("*")
+        .eq("user_id", user.id);
+
+      if (attemptsData) {
+        setAttempts(attemptsData.filter((a: any) => a.context === "diagnostic"));
+      }
+
       setLoading(false);
     }
     loadData();
@@ -52,6 +66,13 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Calculate diagnostic results if test taken
+  const getDiagnosticScore = () => {
+    if (attempts.length === 0) return null;
+    const correct = attempts.filter(a => a.corect).length;
+    return Math.round((correct / attempts.length) * 100);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0B0F19]">
@@ -59,6 +80,8 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const diagScore = getDiagnosticScore();
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-[#F3F4F6] p-6">
@@ -116,34 +139,70 @@ export default function Dashboard() {
           {/* Right Columns: Active Plan & Invitation Link */}
           <div className="md:col-span-2 space-y-6">
             
-            {/* Active Track Card */}
+            {/* Active Track / Diagnostic Card */}
             {profile.rol === "elev" ? (
-              <div className="bg-[#161D30] border border-[#2B354F] rounded-3xl p-6">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-1.5">
-                  <BookOpen className="h-4 w-4 text-blue-500" /> Traseu de Învățare Activ
-                </h3>
-
-                {profile.traseu_activ_id ? (
-                  <div className="bg-[#0B0F19] border border-blue-500/20 rounded-2xl p-4 flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-white text-base">Biologie B2</h4>
-                      <p className="text-xs text-gray-400 mt-1">Pregătire pentru Anatomie, Genetică și Fiziologie.</p>
+              <div className="space-y-4">
+                {/* Active Track Banner */}
+                {profile.traseu_activ_id && (
+                  <div className="bg-[#161D30] border border-[#2B354F] rounded-3xl p-6">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-1.5">
+                      <BookOpen className="h-4 w-4 text-blue-500" /> Traseu de Învățare Activ
+                    </h3>
+                    
+                    <div className="bg-[#0B0F19] border border-blue-500/20 rounded-2xl p-4 flex items-center justify-between">
+                      <div>
+                        <h4 className="font-bold text-white text-base">Biologie B2</h4>
+                        <p className="text-xs text-gray-400 mt-1">Pregătire pentru Anatomie, Genetică și Fiziologie.</p>
+                      </div>
+                      <span className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-bold">
+                        Activ
+                      </span>
                     </div>
-                    <span className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-bold">
-                      Activ
-                    </span>
-                  </div>
-                ) : (
-                  <div>
-                    <p className="text-xs text-gray-400">Nu ai niciun traseu selectat momentan.</p>
-                    <button
-                      onClick={() => router.push("/choose-track")}
-                      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all"
-                    >
-                      Alege un traseu
-                    </button>
                   </div>
                 )}
+
+                {/* Diagnostic Test Card status */}
+                <div className="bg-[#161D30] border border-[#2B354F] rounded-3xl p-6">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-1.5">
+                    <BarChart2 className="h-4 w-4 text-blue-500" /> Stare Evaluare Diagnostic
+                  </h3>
+
+                  {diagScore !== null ? (
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-[#0B0F19] p-4 rounded-2xl border border-emerald-500/20">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Test Diagnostic Finalizat</span>
+                        <h4 className="font-bold text-white text-sm mt-1">Scor Obținut: {diagScore}%</h4>
+                        <p className="text-xs text-gray-400 mt-1">Răspunsuri corecte: {attempts.filter(a => a.corect).length} / {attempts.length}</p>
+                      </div>
+                      <Link 
+                        href="/diagnostic" 
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all text-center shrink-0"
+                      >
+                        Reia Testul
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="bg-[#0B0F19] border border-yellow-800/30 p-5 rounded-2xl flex flex-col gap-4">
+                      <div className="flex items-start gap-2.5">
+                        <ShieldAlert className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
+                        <div>
+                          <h4 className="font-bold text-white text-sm">Testul Diagnostic nu este finalizat!</h4>
+                          <p className="text-xs text-gray-400 mt-1">
+                            Este recomandat să parcurgi testul de 24 de întrebări pentru a genera harta de cunoștințe și planul de studiu.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <Link
+                        href="/diagnostic"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1"
+                      >
+                        <Sparkles className="h-3.5 w-3.5" />
+                        <span>Începe Testul Diagnostic</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="bg-[#161D30] border border-[#2B354F] rounded-3xl p-6">

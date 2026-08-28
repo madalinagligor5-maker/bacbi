@@ -44,7 +44,7 @@ export default function ChooseTrackPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/diagnostic");
     } catch (err) {
       alert("A apărut o eroare neașteptată.");
       setLoading(false);
