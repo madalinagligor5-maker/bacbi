@@ -10,7 +10,7 @@ create table if not exists public.users (
   id uuid primary key references auth.users (id) on delete cascade,
   email text not null,
   rol text not null check (rol in ('elev', 'parinte', 'admin')),
-  traseu_activ_id uuid references public.trasee (id),
+  traseu_activ_id uuid,
   creat_la timestamptz not null default now()
 );
 
