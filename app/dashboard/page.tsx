@@ -26,7 +26,11 @@ export default async function DashboardPage() {
 
   let codInvitatie: string | null = null;
   if (user.rol === "elev") {
-    codInvitatie = await genereazaCodInvitatiePentruElev(user.id);
+    try {
+      codInvitatie = await genereazaCodInvitatiePentruElev(user.id);
+    } catch (err) {
+      console.error("Nu s-a putut genera codul de invitație:", err);
+    }
   }
 
   return (
