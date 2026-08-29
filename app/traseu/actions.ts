@@ -22,5 +22,5 @@ export async function alegeTraseu(traseuId: string) {
     throw new Error(error.message);
   }
 
-  redirect("/dashboard");
+  redirect("/diagnostic");
 }
