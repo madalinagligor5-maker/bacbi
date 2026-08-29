@@ -31,9 +31,13 @@ export async function inregistreaza(_prev: AuthState, formData: FormData): Promi
 
   const supabase = createClient();
 
+  // Rolul e trimis ca metadata; profilul din public.users e creat automat
+  // de trigger-ul on_auth_user_created (vezi supabase/migrations/0002_profile_trigger.sql),
+  // care rulează chiar dacă email-ul nu e încă confirmat.
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email,
     password: parola,
+    options: { data: { rol } },
   });
 
   if (signUpError || !signUpData.user) {
@@ -41,16 +45,6 @@ export async function inregistreaza(_prev: AuthState, formData: FormData): Promi
   }
 
   const userId = signUpData.user.id;
-
-  const { error: profilError } = await supabase.from("users").insert({
-    id: userId,
-    email,
-    rol,
-  });
-
-  if (profilError) {
-    return { error: `Cont creat, dar profilul nu a putut fi salvat: ${profilError.message}` };
-  }
 
   if (rol === "parinte") {
     const { data: link, error: linkFindError } = await supabase
