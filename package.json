@@ -1,5 +1,5 @@
 {
-  "name": "bac",
+  "name": "bacbio",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,12 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"**/*.{js,ts,tsx,json,css,md}\"",
-    "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css,md}\""
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.12.5",
-    "@supabase/supabase-js": "^2.112.4",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18"
@@ -23,10 +20,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
-    "eslint-config-prettier": "^10.1.8",
     "postcss": "^8",
-    "prettier": "^3.9.6",
-    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
