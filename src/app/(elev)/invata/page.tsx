@@ -10,6 +10,7 @@ export default function Invata() {
           <h2 className="font-semibold">
             Varianta {v.numar}. {v.titlu}
           </h2>
+          <p className="text-sm text-slate-500">{v.stare}</p>
           {capitolePeClase(v).map(([clasa, capitole]) => (
             <div key={clasa} className="mt-2">
               <h3 className="text-sm text-slate-500">Clasa a {clasa}-a</h3>

@@ -35,18 +35,20 @@ flowchart LR
 
 Azi trimite elevul la Învață, Grile, Recapitulare sau Simulare; grilele, recapitularea și rezultatul simulării alimentează Progres.
 
-## Conținutul: 2 variante, 25 de capitole
+## Conținutul: 2 variante, 38 de capitole
 
-Elevul susține una dintre cele două variante ale programei, iar tot conținutul (capitole, grile, simulări) se grupează după ea. Capitolele urmează punctele din programa oficială; fiecare are 1–9 teme.
+Elevul susține una dintre cele două variante ale programei, iar tot conținutul (capitole, grile, simulări) se grupează după ea. Materialele de conținut sunt în [`continut/`](../continut/README.md).
 
-| Varianta                                | Clasa  | Capitole | Exemple de capitole                                                                     |
-| --------------------------------------- | ------ | -------- | --------------------------------------------------------------------------------------- |
-| I. Biologie vegetală și animală         | a IX-a | 3        | Diversitatea lumii vii, Celula, Ereditate și variabilitate                              |
-| I. Biologie vegetală și animală         | a X-a  | 10       | Țesuturi, Fotosinteza, Digestia, Respirația, Circulația, Excreția, Sensibilitatea, Reproducerea |
-| II. Anatomie, genetică și ecologie umană | a XI-a | 11       | Sistemul nervos, Analizatorii, Glandele endocrine, Sistemul osos, Digestia, Circulația, Respirația |
-| II. Anatomie, genetică și ecologie umană | a XII-a | 1       | Genetică moleculară (acizi nucleici, organizarea materialului genetic)                  |
+| Varianta                                 | Clasa     | Capitole     | Stare                                                                                  |
+| ---------------------------------------- | --------- | ------------ | -------------------------------------------------------------------------------------- |
+| I. Biologie vegetală și animală (E.d)    | IX și X   | 23 (A01–A23) | Complet: 623 de itemi, glosar, fișe de recuperare, tabele comparative, confuzii tipice |
+| II. Anatomie, genetică și ecologie umană | XI și XII | 15 (B01–B15) | Doar harta capitolelor, din cuprinsurile manualelor; fără itemi                         |
 
-Date pentru dezvoltare: lista completă a capitolelor și a temelor e în [`src/lib/curriculum.ts`](../src/lib/curriculum.ts).
+- Harta Modulului A, cu concepte, sloturi de bac și prerechizite: [`continut/docs/harta_continut.md`](../continut/docs/harta_continut.md).
+- Harta Modulului B: [`continut/docs/modul_B_harta.md`](../continut/docs/modul_B_harta.md).
+- Formatul probei (Subiectele I, II, III și tipurile de itemi): [`continut/docs/format_proba.md`](../continut/docs/format_proba.md).
+
+Date pentru dezvoltare: [`src/lib/curriculum.ts`](../src/lib/curriculum.ts) citește harta Modulului A din `continut/out/harta_continut.json`; [`src/lib/continut.ts`](../src/lib/continut.ts) expune banca de itemi și materialele de sprijin.
 
 ## Pagini publice
 
@@ -91,7 +93,7 @@ Propunere de pornire: elevul vede valoarea în prima sesiune, apoi întâlnește
 
 | Zonă                    | Gratuit                   | Premium                 |
 | ----------------------- | ------------------------- | ----------------------- |
-| Capitole și grile       | 1–2 capitole              | Toate cele 25           |
+| Capitole și grile       | 1–2 capitole              | Toate capitolele        |
 | Simulări                | 1 simulare de probă       | Toate simulările        |
 | Repetiție spațiată      | Pentru capitolele gratuite | Pentru tot conținutul  |
 | Plan zilnic și countdown | Da                       | Da                      |
@@ -102,12 +104,15 @@ Planuri: **Abonament lunar** sau **Plată unică până la Bac**. Accesul se ver
 ## Întrebări deschise
 
 - [ ] Programa de simulare nu listează conținuturi de ecologie, dar titlul Variantei II o menționează; la clasa a XII-a apare doar genetica moleculară. Există o anexă completă?
-- [ ] Structura subiectelor (Subiectul I, II, III) lipsește din PDF. Avem modele oficiale de subiecte?
+- [x] Structura subiectelor (Subiectul I, II, III): reconstituită din subiectul de bac 2025 și simularea 2026 (`continut/docs/format_proba.md`). Lipsește încă baremul oficial.
+- [ ] Fișele de sinteză din care vin capitolele A01–A23 sunt din 2012. Trebuie verificate cu programa în vigoare.
+- [ ] Modulul B: programa actuală și subiectele oficiale, înainte de producerea itemilor.
+- [ ] Problemele heterozomale din A23 (hemofilie, daltonism) sunt extinderi: apar în programă?
 - [ ] Limitele exacte ale planului gratuit și prețurile.
 - [ ] Cine verifică corectitudinea întrebărilor înainte de publicare (tu, un specialist sau ambii)?
 
 ## Pașii următori
 
 1. Design vizual: stil, culori, ecranele principale (se construiește după acest document).
-2. Schema bazei de date și primul set de întrebări pe un capitol.
+2. Schema bazei de date și importul băncii de itemi din `continut/out/`.
 3. Motorul de repetiție spațiată și sesiunile de grile.
