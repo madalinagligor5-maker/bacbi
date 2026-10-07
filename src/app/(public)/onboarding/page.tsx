@@ -1,16 +1,12 @@
-import Pagina from "@/components/Pagina";
+import Onboarding from "@/components/Onboarding";
+import { VARIANTE } from "@/lib/curriculum";
+import { DATA_EXAMEN_ORIENTATIVA } from "@/lib/examen";
 
 export default function Page() {
   return (
-    <Pagina
-      titlu="Onboarding"
-      continut={[
-        "Varianta susținută",
-        "Data examenului",
-        "Minute pe zi (10/20/30)",
-        "Test rapid de nivel",
-        "Acțiune: Generează planul",
-      ]}
+    <Onboarding
+      variante={VARIANTE.map(({ id, numar, titlu, stare }) => ({ id, numar, titlu, stare }))}
+      dataImplicita={DATA_EXAMEN_ORIENTATIVA}
     />
   );
 }

@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { VARIANTE } from "@/lib/curriculum";
+import AntetPagina from "@/components/AntetPagina";
+import ComutatorVarianta from "@/components/ComutatorVarianta";
+import Icon from "@/components/Icon";
+import { VARIANTE, getVarianta } from "@/lib/curriculum";
 import { itemiAutocorectabili } from "@/lib/continut";
 
 const DIFICULTATI = [
@@ -9,55 +12,72 @@ const DIFICULTATI = [
   { valoare: "3", eticheta: "Greu" },
 ];
 
-export default function Grile({ searchParams }: { searchParams: { dificultate?: string } }) {
+export default function Grile({
+  searchParams,
+}: {
+  searchParams: { dificultate?: string; varianta?: string };
+}) {
   const dificultate = searchParams.dificultate ?? "";
+  const varianta = getVarianta(searchParams.varianta ?? "") ?? VARIANTE[0];
   const sufix = dificultate ? `?dificultate=${dificultate}` : "";
 
+  const randuri = varianta.capitole.map((c) => ({
+    capitol: c,
+    n: itemiAutocorectabili(c.id).filter((i) => !dificultate || String(i.difficulty) === dificultate).length,
+  }));
+
   return (
-    <main className="mx-auto max-w-xl px-4 py-6">
-      <h1 className="text-2xl font-semibold">Grile</h1>
+    <main className="mx-auto max-w-2xl px-4 pt-8">
+      <AntetPagina titlu="Grile" subtitlu="O întrebare pe ecran, explicația imediat după răspuns." />
+      <ComutatorVarianta activa={varianta} baza="/grile" />
 
-      <nav className="mt-4 flex gap-2 text-sm">
-        {DIFICULTATI.map((d) => (
-          <Link
-            key={d.valoare}
-            href={d.valoare ? `/grile?dificultate=${d.valoare}` : "/grile"}
-            className={`rounded-full border px-3 py-1 ${d.valoare === dificultate ? "bg-slate-900 text-white" : ""}`}
-          >
-            {d.eticheta}
-          </Link>
+      <div className="mb-6 flex flex-wrap gap-2" aria-label="Dificultate">
+        {DIFICULTATI.map((d) => {
+          const params = new URLSearchParams({ varianta: varianta.id });
+          if (d.valoare) params.set("dificultate", d.valoare);
+          return (
+            <Link
+              key={d.valoare}
+              href={`/grile?${params}`}
+              className={`chip ${d.valoare === dificultate ? "chip-active" : ""}`}
+            >
+              {d.eticheta}
+            </Link>
+          );
+        })}
+        <span className="chip cursor-not-allowed opacity-50" title="Disponibil după ce progresul se salvează">
+          Doar greșite
+        </span>
+      </div>
+
+      <ul className="space-y-3">
+        {randuri.map(({ capitol: c, n }) => (
+          <li key={c.id}>
+            {n > 0 ? (
+              <Link href={`/grile/${c.slug}${sufix}`} className="card flex items-center gap-4 p-4 hover:border-primary">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary-soft font-display text-sm font-bold text-primary">
+                  {c.id}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold leading-snug">{c.titlu}</span>
+                  <span className="block text-sm text-muted">{n} întrebări</span>
+                </span>
+                <Icon nume="sageata" className="h-5 w-5 shrink-0 text-muted" />
+              </Link>
+            ) : (
+              <div className="card flex items-center gap-4 p-4 opacity-60">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-surface-2 font-display text-sm font-bold text-muted">
+                  {c.id}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold leading-snug">{c.titlu}</span>
+                  <span className="block text-sm text-muted">În pregătire</span>
+                </span>
+              </div>
+            )}
+          </li>
         ))}
-      </nav>
-      <p className="mt-2 text-sm text-slate-500">
-        Filtrul „doar greșite” și modul mixt vin odată cu salvarea progresului.
-      </p>
-
-      {VARIANTE.map((v) => (
-        <section key={v.id} className="mt-6">
-          <h2 className="font-semibold">
-            Varianta {v.numar}. {v.titlu}
-          </h2>
-          <ul className="mt-2 divide-y">
-            {v.capitole.map((c) => {
-              const n = itemiAutocorectabili(c.id).filter(
-                (i) => !dificultate || String(i.difficulty) === dificultate,
-              ).length;
-              return (
-                <li key={c.id} className="flex items-center justify-between py-2">
-                  {n > 0 ? (
-                    <Link href={`/grile/${c.slug}${sufix}`} className="underline">
-                      {c.titlu}
-                    </Link>
-                  ) : (
-                    <span className="text-slate-400">{c.titlu}</span>
-                  )}
-                  <span className="text-sm text-slate-500">{n > 0 ? `${n} itemi` : "în pregătire"}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ))}
+      </ul>
     </main>
   );
 }

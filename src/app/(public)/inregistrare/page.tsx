@@ -1,15 +1,5 @@
-import Pagina from "@/components/Pagina";
+import FormularCont from "@/components/FormularCont";
 
 export default function Page() {
-  return (
-    <Pagina
-      titlu="Înregistrare"
-      continut={[
-        "Email + parolă sau Google",
-        "Acord termeni",
-        "Acord părinte sub 16 ani",
-        "Acțiune: Creează cont",
-      ]}
-    />
-  );
+  return <FormularCont tip="inregistrare" />;
 }

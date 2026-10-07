@@ -1,14 +1,5 @@
-import Pagina from "@/components/Pagina";
+import FormularCont from "@/components/FormularCont";
 
 export default function Page() {
-  return (
-    <Pagina
-      titlu="Autentificare"
-      continut={[
-        "Email + parolă sau Google",
-        "Resetare parolă",
-        "Acțiune: Intră în cont",
-      ]}
-    />
-  );
+  return <FormularCont tip="autentificare" />;
 }

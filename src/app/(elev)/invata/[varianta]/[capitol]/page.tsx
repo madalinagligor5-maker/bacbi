@@ -1,16 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AntetPagina from "@/components/AntetPagina";
+import Icon from "@/components/Icon";
 import { VARIANTE, getCapitol, getCapitolDupaId } from "@/lib/curriculum";
-import {
-  NUME_TIP,
-  fiseCapitol,
-  glosarCapitol,
-  numarPeTip,
-  tabeleCapitol,
-} from "@/lib/continut";
+import { NUME_TIP, fiseCapitol, glosarCapitol, numarPeTip, tabeleCapitol } from "@/lib/continut";
 
 export function generateStaticParams() {
   return VARIANTE.flatMap((v) => v.capitole.map((c) => ({ varianta: v.id, capitol: c.slug })));
+}
+
+function Sectiune({ titlu, children }: { titlu: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2 className="mb-3 font-display text-xl font-bold">{titlu}</h2>
+      {children}
+    </section>
+  );
 }
 
 export default function Capitol({ params }: { params: { varianta: string; capitol: string } }) {
@@ -21,21 +26,32 @@ export default function Capitol({ params }: { params: { varianta: string; capito
   const fise = fiseCapitol(capitol.id);
   const tabele = tabeleCapitol(capitol.id);
   const itemi = numarPeTip(capitol.id);
+  const totalItemi = itemi.reduce((s, [, n]) => s + n, 0);
 
   return (
-    <main className="mx-auto max-w-xl space-y-8 px-4 py-6">
-      <header>
-        <p className="text-sm text-slate-500">
-          {capitol.id} · clasa a {capitol.clasa}-a
-        </p>
-        <h1 className="text-2xl font-semibold">{capitol.titlu}</h1>
-        {capitol.sloturiBac.length > 0 && (
-          <p className="mt-1 text-sm text-slate-500">
-            Apare la bac la: {capitol.sloturiBac.join(", ")}
-          </p>
+    <main className="mx-auto max-w-2xl space-y-8 px-4 pt-6">
+      <div>
+        <AntetPagina
+          inapoi={{ href: `/invata?varianta=${params.varianta}`, text: "Capitole" }}
+          eticheta={`${capitol.id} · clasa a ${capitol.clasa}-a`}
+          titlu={capitol.titlu}
+        />
+        {(capitol.sloturiBac.length > 0 || capitol.ideiMari.length > 0) && (
+          <div className="-mt-2 flex flex-wrap gap-2">
+            {capitol.sloturiBac.map((s) => (
+              <span key={s} className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
+                Bac {s}
+              </span>
+            ))}
+            {capitol.ideiMari.map((s) => (
+              <span key={s} className="rounded-full bg-surface-2 px-3 py-1 text-xs font-medium text-muted">
+                {s}
+              </span>
+            ))}
+          </div>
         )}
         {capitol.prerechizite.length > 0 && (
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-4 text-sm text-muted">
             Înainte, recapitulează:{" "}
             {capitol.prerechizite.map((id, i) => {
               const p = getCapitolDupaId(id);
@@ -43,7 +59,7 @@ export default function Capitol({ params }: { params: { varianta: string; capito
                 <span key={id}>
                   {i > 0 && ", "}
                   {p ? (
-                    <Link href={`/invata/${p.varianta}/${p.slug}`} className="underline">
+                    <Link href={`/invata/${p.varianta}/${p.slug}`} className="font-medium text-primary underline-offset-2 hover:underline">
                       {p.titlu}
                     </Link>
                   ) : (
@@ -54,61 +70,79 @@ export default function Capitol({ params }: { params: { varianta: string; capito
             })}
           </p>
         )}
-      </header>
+      </div>
 
       {!capitol.areContinut && (
-        <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="rounded-2xl bg-warn-soft p-4 text-sm text-warn">
           Conținut în pregătire: capitolul e doar pe hartă și trebuie confirmat cu programa în vigoare.
         </p>
       )}
 
-      <section>
-        <h2 className="font-semibold">Teme</h2>
-        <ul className="mt-2 list-disc space-y-1 pl-5">
-          {capitol.teme.map((t) => (
-            <li key={t}>{t}</li>
+      {totalItemi > 0 && (
+        <Link href={`/grile/${capitol.slug}`} className="flex items-center gap-4 rounded-2xl bg-primary p-5 text-primary-ink hover:bg-primary-hover">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/15">
+            <Icon nume="grile" className="h-6 w-6" />
+          </span>
+          <span className="flex-1">
+            <span className="block font-display text-lg font-bold">Verifică-te cu grile</span>
+            <span className="block text-sm opacity-85">
+              {itemi.map(([tip, n]) => `${n} ${NUME_TIP[tip]?.toLowerCase() ?? tip}`).slice(0, 2).join(" · ")}
+            </span>
+          </span>
+          <Icon nume="sageata" className="h-5 w-5" />
+        </Link>
+      )}
+
+      <Sectiune titlu="Teme">
+        <ul className="card divide-y divide-line">
+          {capitol.teme.map((t, i) => (
+            <li key={t} className="flex items-start gap-3 p-4">
+              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-surface-2 text-xs font-bold text-muted">
+                {i + 1}
+              </span>
+              <span className="flex-1">{t}</span>
+            </li>
           ))}
         </ul>
-        <p className="mt-2 text-sm text-slate-500">
-          Fiecare temă: marcaj „am înțeles” / „repetă mai târziu”.
-        </p>
-      </section>
+      </Sectiune>
 
       {fise.length > 0 && (
-        <section>
-          <h2 className="font-semibold">Întrebări de verificare</h2>
-          <ul className="mt-2 space-y-2">
+        <Sectiune titlu="Întrebări de verificare">
+          <p className="-mt-1 mb-3 text-sm text-muted">Răspunde în gând, apoi deschide cardul.</p>
+          <ul className="space-y-2">
             {fise.map((f) => (
               <li key={f.id}>
-                <details className="rounded-lg border p-3">
-                  <summary className="cursor-pointer">{f.front}</summary>
-                  <p className="mt-2 text-slate-600">{f.back}</p>
+                <details className="card group p-4 open:border-primary">
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-3 font-medium">
+                    {f.front}
+                    <span className="mt-0.5 shrink-0 text-xs font-semibold text-primary group-open:hidden">Arată</span>
+                  </summary>
+                  <p className="mt-3 border-t border-line pt-3 text-muted">{f.back}</p>
                 </details>
               </li>
             ))}
           </ul>
-        </section>
+        </Sectiune>
       )}
 
       {tabele.map((t) => (
-        <section key={t.title}>
-          <h2 className="font-semibold">{t.title}</h2>
-          <div className="mt-2 overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
+        <Sectiune key={t.title} titlu={t.title}>
+          <div className="card overflow-x-auto">
+            <table className="w-full min-w-[480px] text-left text-sm">
+              <thead className="bg-surface-2">
                 <tr>
                   {t.cols.map((c) => (
-                    <th key={c} className="border-b p-2">
+                    <th key={c} className="p-3 font-semibold">
                       {c}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-line">
                 {t.rows.map((r) => (
                   <tr key={r[0]}>
                     {r.map((cel, i) => (
-                      <td key={i} className="border-b p-2 align-top">
+                      <td key={i} className={`p-3 align-top ${i === 0 ? "font-medium" : "text-muted"}`}>
                         {cel}
                       </td>
                     ))}
@@ -117,36 +151,20 @@ export default function Capitol({ params }: { params: { varianta: string; capito
               </tbody>
             </table>
           </div>
-        </section>
+        </Sectiune>
       ))}
 
       {glosar.length > 0 && (
-        <section>
-          <h2 className="font-semibold">Glosar</h2>
-          <dl className="mt-2 space-y-2 text-sm">
+        <Sectiune titlu="Glosar">
+          <dl className="card divide-y divide-line">
             {glosar.map((g) => (
-              <div key={g.term}>
-                <dt className="font-medium">{g.term}</dt>
-                <dd className="text-slate-600">{g.definition}</dd>
+              <div key={g.term} className="p-4">
+                <dt className="font-semibold">{g.term}</dt>
+                <dd className="mt-1 text-sm text-muted">{g.definition}</dd>
               </div>
             ))}
           </dl>
-        </section>
-      )}
-
-      {itemi.length > 0 && (
-        <section>
-          <h2 className="font-semibold">Itemi în bancă</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            {itemi.map(([tip, n]) => `${NUME_TIP[tip] ?? tip}: ${n}`).join(" · ")}
-          </p>
-          <Link
-            href={`/grile/${capitol.slug}`}
-            className="mt-3 inline-block rounded-lg bg-slate-900 px-4 py-2 text-white"
-          >
-            Fă grile pe acest capitol
-          </Link>
-        </section>
+        </Sectiune>
       )}
     </main>
   );

@@ -44,3 +44,12 @@ export const STRUCTURA_PROBA = [
     ],
   },
 ] as const;
+
+// Până la onboarding, countdown-ul folosește o dată orientativă pentru proba E.d din iunie 2027.
+// Data reală o alege elevul (sau se actualizează când apare calendarul oficial).
+export const DATA_EXAMEN_ORIENTATIVA = "2027-06-24";
+
+export function zilePanaLa(dataIso: string, azi = new Date()): number {
+  const tinta = new Date(`${dataIso}T09:00:00+03:00`).getTime();
+  return Math.max(0, Math.ceil((tinta - azi.getTime()) / 86_400_000));
+}

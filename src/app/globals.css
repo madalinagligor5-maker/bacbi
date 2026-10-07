@@ -1,3 +1,84 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Tokenii vizuali BacBio. Verde de frunză pentru învățare, coral pentru energie
+   (seria de zile, accente), hârtie caldă ca fundal. Tema întunecată e pentru serile de studiu. */
+:root {
+  --bg: #f6f4ee;
+  --surface: #ffffff;
+  --surface-2: #efede5;
+  --ink: #16211b;
+  --muted: #5b6660;
+  --line: #e2ded3;
+  --primary: #1f6b4f;
+  --primary-hover: #185840;
+  --primary-ink: #ffffff;
+  --primary-soft: #dcefe6;
+  --accent: #e8693c;
+  --accent-soft: #fce6dc;
+  --success: #1e8a5a;
+  --success-soft: #dcf2e6;
+  --danger: #c8423b;
+  --danger-soft: #f9e1df;
+  --warn: #9a6512;
+  --warn-soft: #fbf0d9;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1714;
+    --surface: #16211c;
+    --surface-2: #1d2a24;
+    --ink: #e9efeb;
+    --muted: #9aa8a0;
+    --line: #2a3832;
+    --primary: #4fbf8b;
+    --primary-hover: #66cf9d;
+    --primary-ink: #0b1410;
+    --primary-soft: #18352a;
+    --accent: #f08a5d;
+    --accent-soft: #3a2219;
+    --success: #4fbf8b;
+    --success-soft: #16352a;
+    --danger: #ef7a72;
+    --danger-soft: #3a1c1a;
+    --warn: #e3b154;
+    --warn-soft: #3a2e14;
+    color-scheme: dark;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-surface;
+  }
+  .btn {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-5 font-semibold transition-colors disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-primary-ink hover:bg-primary-hover;
+  }
+  .btn-secondary {
+    @apply btn border border-line bg-surface text-ink hover:bg-surface-2;
+  }
+  .chip {
+    @apply inline-flex min-h-[36px] items-center rounded-full border border-line bg-surface px-4 text-sm font-medium transition-colors hover:bg-surface-2;
+  }
+  .chip-active {
+    @apply border-primary bg-primary text-primary-ink hover:bg-primary-hover;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-wider text-muted;
+  }
+  .input {
+    @apply min-h-[44px] w-full rounded-xl border border-line bg-surface px-4 text-ink placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-soft;
+  }
+}

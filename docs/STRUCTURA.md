@@ -113,6 +113,6 @@ Planuri: **Abonament lunar** sau **Plată unică până la Bac**. Accesul se ver
 
 ## Pașii următori
 
-1. Design vizual: stil, culori, ecranele principale (se construiește după acest document).
+1. [x] Design vizual: tokenii de culoare (temă deschisă și întunecată), fonturile Bricolage Grotesque + Inter și ecranele principale sunt în `src/app/globals.css`, `tailwind.config.ts` și `src/components/`.
 2. Schema bazei de date și importul băncii de itemi din `continut/out/`.
 3. Motorul de repetiție spațiată și sesiunile de grile.
