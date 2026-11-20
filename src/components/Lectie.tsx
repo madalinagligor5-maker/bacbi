@@ -24,7 +24,13 @@ const CASETE: Record<"retine" | "atentie" | "bac", { titlu: string; icon: NumeIc
 export function Figura({ imagine }: { imagine: Imagine }) {
   return (
     <figure className="card overflow-hidden">
-      <div className="bg-white p-3">
+      <a
+        href={`/lectii/${imagine.fisier}`}
+        target="_blank"
+        rel="noopener"
+        className="block bg-white p-3"
+        aria-label={`${imagine.alt} (deschide imaginea mărită)`}
+      >
         <Image
           src={`/lectii/${imagine.fisier}`}
           alt={imagine.alt}
@@ -34,9 +40,10 @@ export function Figura({ imagine }: { imagine: Imagine }) {
           sizes="(max-width: 672px) 100vw, 640px"
           unoptimized={imagine.fisier.endsWith(".svg")}
         />
-      </div>
+      </a>
       <figcaption className="border-t border-line px-4 py-3 text-sm">
         <span className="text-ink">{imagine.legenda}</span>
+        <span className="mt-1 block text-xs font-medium text-primary">Atinge imaginea ca s-o vezi mărită.</span>
         <span className="mt-1 block text-xs text-muted">
           {imagine.autor ? `${imagine.autor}, ` : ""}
           {imagine.licentaUrl ? (
