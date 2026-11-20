@@ -2,8 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AntetPagina from "@/components/AntetPagina";
 import Icon from "@/components/Icon";
+import Lectie, { Cuprins } from "@/components/Lectie";
 import { VARIANTE, getCapitol, getCapitolDupaId } from "@/lib/curriculum";
-import { NUME_TIP, fiseCapitol, glosarCapitol, numarPeTip, tabeleCapitol } from "@/lib/continut";
+import { fiseCapitol, numarTip, glosarCapitol, numarPeTip, tabeleCapitol } from "@/lib/continut";
+import { getLectie, minuteCitire } from "@/lib/lectii";
 
 export function generateStaticParams() {
   return VARIANTE.flatMap((v) => v.capitole.map((c) => ({ varianta: v.id, capitol: c.slug })));
@@ -27,6 +29,8 @@ export default function Capitol({ params }: { params: { varianta: string; capito
   const tabele = tabeleCapitol(capitol.id);
   const itemi = numarPeTip(capitol.id);
   const totalItemi = itemi.reduce((s, [, n]) => s + n, 0);
+  const lectie = getLectie(capitol.id);
+  const nrImagini = lectie?.filter((b) => b.tip === "imagine").length ?? 0;
 
   return (
     <main className="mx-auto max-w-2xl space-y-8 px-4 pt-6">
@@ -78,22 +82,38 @@ export default function Capitol({ params }: { params: { varianta: string; capito
         </p>
       )}
 
+      {lectie && (
+        <section aria-label="Lecția" className="space-y-6">
+          <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+            <span className="inline-flex items-center gap-1.5 font-semibold text-primary">
+              <Icon nume="invata" className="h-4 w-4" /> Lecție
+            </span>
+            <span>{minuteCitire(lectie)} minute de citit</span>
+            {nrImagini > 0 && <span>{nrImagini} {nrImagini === 1 ? "imagine" : "imagini"}</span>}
+          </p>
+          <Cuprins blocuri={lectie} />
+          <Lectie blocuri={lectie} />
+        </section>
+      )}
+
       {totalItemi > 0 && (
         <Link href={`/grile/${capitol.slug}`} className="flex items-center gap-4 rounded-2xl bg-primary p-5 text-primary-ink hover:bg-primary-hover">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/15">
             <Icon nume="grile" className="h-6 w-6" />
           </span>
           <span className="flex-1">
-            <span className="block font-display text-lg font-bold">Verifică-te cu grile</span>
+            <span className="block font-display text-lg font-bold">
+              {lectie ? "Ai citit lecția? Verifică-te cu grile" : "Verifică-te cu grile"}
+            </span>
             <span className="block text-sm opacity-85">
-              {itemi.map(([tip, n]) => `${n} ${NUME_TIP[tip]?.toLowerCase() ?? tip}`).slice(0, 2).join(" · ")}
+              {itemi.map(([tip, n]) => numarTip(tip, n)).slice(0, 2).join(" · ")}
             </span>
           </span>
           <Icon nume="sageata" className="h-5 w-5" />
         </Link>
       )}
 
-      <Sectiune titlu="Teme">
+      <Sectiune titlu={lectie ? "Concepte-cheie, pe scurt" : "Teme"}>
         <ul className="card divide-y divide-line">
           {capitol.teme.map((t, i) => (
             <li key={t} className="flex items-start gap-3 p-4">
@@ -126,7 +146,7 @@ export default function Capitol({ params }: { params: { varianta: string; capito
       )}
 
       {tabele.map((t) => (
-        <Sectiune key={t.title} titlu={t.title}>
+        <Sectiune key={t.title} titlu={`Recapitulare: ${t.title}`}>
           <div className="card overflow-x-auto">
             <table className="w-full min-w-[480px] text-left text-sm">
               <thead className="bg-surface-2">

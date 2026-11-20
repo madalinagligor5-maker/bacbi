@@ -28,3 +28,27 @@ Validări: 4 opțiuni unice, index corect valid, confuzii existente în registru
 5. Problemele heterozomale (hemofilie, daltonism) din A23 sunt extinderi: confirmați că apar în programa profilului vostru.
 6. Doar o parte din itemi citează o sursă explicită (câmpul `source`); restul se bazează pe capitolul indicat în `meta.sources`.
 7. Barron’s este sursă suplimentară de nivel universitar; nu a fost folosită pentru itemi.
+
+## Lecții (`lectii/`)
+Câte o lecție pentru fiecare capitol A01–A23, scrisă pornind de la conceptele, glosarul, fișele și tabelele de mai sus. Formatul este un Markdown simplu, citit de `src/lib/lectii.ts`:
+
+- `## Titlu` și `### Subtitlu`; paragrafe; liste cu `-` sau `1.`; tabele cu `|`;
+- `![[slug]]` inserează o imagine din registrul de imagini;
+- `> [!retine]`, `> [!atentie]`, `> [!bac]` creează casetele „Reține”, „Atenție, capcană” și „La bac”.
+
+## Imagini (`imagini/`)
+Imaginile vin de pe Wikimedia Commons și sunt doar în domeniul public, CC0, CC BY sau CC BY-SA.
+
+| Fișier | Rol |
+|---|---|
+| `surse.json` | ce imagine folosește fiecare slug, legenda și textul alternativ în română, traducerile etichetelor |
+| `descarca.py` | descarcă imaginile, citește licența și autorul de pe pagina fiecărei imagini, respinge orice altă licență |
+| `pregateste.py` | traduce etichetele SVG în română, comprimă imaginile, scrie `public/lectii/` și `imagini.json` |
+| `imagini.json` | registrul generat, cu dimensiuni, autor, licență și sursă; atribuirile apar sub fiecare imagine și pe pagina `/surse-imagini` |
+
+```bash
+python3 -I continut/imagini/descarca.py /un/dosar/temporar
+python3 -I continut/imagini/pregateste.py /un/dosar/temporar
+```
+
+Wikimedia limitează strict descărcarea fișierelor originale; scriptul așteaptă cât cere serverul și poate fi reluat. Imaginile marcate cu `"png": true` se descarcă drept miniatură PNG (cu `"limba": "ro"`, în varianta românească, dacă fișierul o are), iar etichetele lor rămase în engleză sunt traduse în legendă.

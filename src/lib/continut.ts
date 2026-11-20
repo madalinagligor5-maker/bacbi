@@ -62,6 +62,25 @@ export const NUME_TIP: Record<string, string> = {
   problema_genetica: "Problemă de genetică",
 };
 
+// Forma de plural, cu „de” după 19 (regula numeralelor în română): „3 grile”, „20 de grile”.
+const PLURAL: Record<string, [string, string]> = {
+  grila: ["grilă", "grile"],
+  adevarat_fals: ["afirmație adevărat/fals", "afirmații adevărat/fals"],
+  completare: ["completare", "completări"],
+  exemple_caracteristica: ["item cu exemple", "itemi cu exemple"],
+  structurat: ["item structurat", "itemi structurați"],
+  enunturi: ["item cu enunțuri", "itemi cu enunțuri"],
+  minieseu: ["minieseu", "minieseuri"],
+  problema_calcul: ["problemă de calcul", "probleme de calcul"],
+  problema_genetica: ["problemă de genetică", "probleme de genetică"],
+};
+
+export function numarTip(tip: string, n: number): string {
+  const [unu, multe] = PLURAL[tip] ?? [tip, tip];
+  if (n === 1) return `1 ${unu}`;
+  return n % 100 >= 20 || (n >= 100 && n % 100 === 0) ? `${n} de ${multe}` : `${n} ${multe}`;
+}
+
 export function itemiCapitol(capitolId: string): Item[] {
   return ITEMI.filter((i) => i.chapter === capitolId);
 }

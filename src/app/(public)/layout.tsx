@@ -20,6 +20,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Logo />
           <p>Pregătire pentru Bacalaureatul la biologie, pe programa de simulare 2026.</p>
+          <Link href="/surse-imagini" className="underline underline-offset-2 hover:text-ink">
+            Surse imagini
+          </Link>
         </div>
       </footer>
     </div>
